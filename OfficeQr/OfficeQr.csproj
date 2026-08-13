@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.6.0-preview1-final" />
+    <PackageReference Include="FluentValidation" Version="8.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.12" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.12" />
