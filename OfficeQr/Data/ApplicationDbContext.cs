@@ -2,11 +2,13 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OfficeQr.Data.Configurations;
+using OfficeQr.Data.Interfaces;
 using OfficeQr.Entity;
 
 namespace OfficeQr.Data;
 
-public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>, IApplicationDbContext
 {
 
     public DbSet<Item> Items {get; set;}
@@ -22,6 +24,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.ApplyConfiguration(new ItemConfiguration());
+        builder.ApplyConfiguration(new ShelfConfiguration());
+        builder.ApplyConfiguration(new CabinetConfiguration());
 
         builder.HasDefaultSchema("identity");
     }
