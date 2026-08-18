@@ -5,7 +5,7 @@ namespace OfficeQr.Data.Interfaces;
 
 public interface IItemRepository : IRepository<Item>
 {
-    
-    //Custom query method's can add here
+
+    Task<IReadOnlyList<Item>> GetByShelfIdAsync(Guid shelfId, CancellationToken cancellationToken = default);
 
 }

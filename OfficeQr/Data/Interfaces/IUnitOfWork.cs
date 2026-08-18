@@ -8,5 +8,9 @@ public interface IUnitOfWork : IAsyncDisposable
     IShelfRepository Shelves {get;}
     ICabinetRepository Cabinets {get;}
 
+    IItemShelfHistoryRepository ItemShelfHistories {get;}
+    IItemUserHistoryRepository ItemUserHistories {get;}
+    IShelfCabinetHistoryRepository ShelfCabinetHistories {get;}
+
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }
