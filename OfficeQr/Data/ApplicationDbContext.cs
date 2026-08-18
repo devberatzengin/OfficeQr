@@ -15,10 +15,15 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Shelf> Shelves {get; set;}
     public DbSet<Cabinet> Cabinets {get; set;}
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+
+    public DbSet<ItemShelfHistory> ItemShelfHistories { get; set; }
+    public DbSet<ItemUserHistory> ItemUserHistories { get; set; }
+    public DbSet<ShelfCabinetHistory> ShelfCabinetHistories { get; set; }
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
-        
+
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -29,7 +34,11 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         builder.ApplyConfiguration(new ShelfConfiguration());
         builder.ApplyConfiguration(new CabinetConfiguration());
 
+        builder.ApplyConfiguration(new ItemShelfHistoryConfiguration());
+        builder.ApplyConfiguration(new ItemUserHistoryConfiguration());
+        builder.ApplyConfiguration(new ShelfCabinetHistoryConfiguration());
+
         builder.HasDefaultSchema("identity");
     }
-    
+
 }
