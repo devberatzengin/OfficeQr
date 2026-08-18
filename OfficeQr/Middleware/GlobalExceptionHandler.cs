@@ -23,6 +23,11 @@ public class GlobalExceptionHandler : IExceptionHandler
             statusCode = appException.StatusCode;
             message = appException.Message;
         }
+        else if (exception is FluentValidation.ValidationException validationException)
+        {
+            statusCode = StatusCodes.Status400BadRequest;
+            message = validationException.Message;
+        }
         else
         {
             _logger.LogError(exception, "Unhandled exception occurred");
