@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OfficeQr.Data;
@@ -11,9 +12,11 @@ using OfficeQr.Data;
 namespace OfficeQr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260814133522_FixShelfsCabinetIdNotNull")]
+    partial class FixShelfsCabinetIdNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,6 +195,9 @@ namespace OfficeQr.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CabinetId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -220,6 +226,8 @@ namespace OfficeQr.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CabinetId");
+
                     b.HasIndex("QrCode")
                         .IsUnique();
 
@@ -228,60 +236,6 @@ namespace OfficeQr.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Items", "identity");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.ItemShelfHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("PlacedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("RemovedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ShelfId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShelfId");
-
-                    b.HasIndex("ItemId", "RemovedAt");
-
-                    b.ToTable("ItemShelfHistories", "identity");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.ItemUserHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ReturnedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("ItemId", "ReturnedAt");
-
-                    b.ToTable("ItemUserHistories", "identity");
                 });
 
             modelBuilder.Entity("OfficeQr.Entity.Shelf", b =>
@@ -320,33 +274,6 @@ namespace OfficeQr.Migrations
                         .IsUnique();
 
                     b.ToTable("Shelves", "identity");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.ShelfCabinetHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CabinetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("MovedInAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("MovedOutAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ShelfId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CabinetId");
-
-                    b.HasIndex("ShelfId", "MovedOutAt");
-
-                    b.ToTable("ShelfCabinetHistories", "identity");
                 });
 
             modelBuilder.Entity("OfficeQr.Entity.User", b =>
@@ -479,6 +406,11 @@ namespace OfficeQr.Migrations
 
             modelBuilder.Entity("OfficeQr.Entity.Item", b =>
                 {
+                    b.HasOne("OfficeQr.Entity.Cabinet", "Cabinet")
+                        .WithMany()
+                        .HasForeignKey("CabinetId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("OfficeQr.Entity.Shelf", "Shelf")
                         .WithMany("Items")
                         .HasForeignKey("ShelfId")
@@ -489,45 +421,9 @@ namespace OfficeQr.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Shelf");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.ItemShelfHistory", b =>
-                {
-                    b.HasOne("OfficeQr.Entity.Item", "Item")
-                        .WithMany("ShelfHistories")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OfficeQr.Entity.Shelf", "Shelf")
-                        .WithMany()
-                        .HasForeignKey("ShelfId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Item");
+                    b.Navigation("Cabinet");
 
                     b.Navigation("Shelf");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.ItemUserHistory", b =>
-                {
-                    b.HasOne("OfficeQr.Entity.Item", "Item")
-                        .WithMany("UserHistories")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OfficeQr.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Item");
 
                     b.Navigation("User");
                 });
@@ -543,35 +439,9 @@ namespace OfficeQr.Migrations
                     b.Navigation("Cabinet");
                 });
 
-            modelBuilder.Entity("OfficeQr.Entity.ShelfCabinetHistory", b =>
-                {
-                    b.HasOne("OfficeQr.Entity.Cabinet", "Cabinet")
-                        .WithMany()
-                        .HasForeignKey("CabinetId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OfficeQr.Entity.Shelf", "Shelf")
-                        .WithMany()
-                        .HasForeignKey("ShelfId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cabinet");
-
-                    b.Navigation("Shelf");
-                });
-
             modelBuilder.Entity("OfficeQr.Entity.Cabinet", b =>
                 {
                     b.Navigation("Shelves");
-                });
-
-            modelBuilder.Entity("OfficeQr.Entity.Item", b =>
-                {
-                    b.Navigation("ShelfHistories");
-
-                    b.Navigation("UserHistories");
                 });
 
             modelBuilder.Entity("OfficeQr.Entity.Shelf", b =>
