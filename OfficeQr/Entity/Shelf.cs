@@ -8,8 +8,8 @@ public class Shelf : BaseEntity
 
     public short Capacity {get; set;} = 1;
 
-    public Guid? CabinetId {get; set;} = null;
-    public Cabinet? Cabinet {get; set;} = null;
+    public Guid CabinetId {get; set;} 
+    public Cabinet Cabinet {get; set;} 
 
     public ICollection<Item> Items {get; set;} = new List<Item>();
 }

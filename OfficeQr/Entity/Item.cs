@@ -14,8 +14,8 @@ public class Item : BaseEntity
     public Guid? ShelfId {get; set;} = null;
     public Shelf? Shelf {get; set;} = null;
 
-    public Guid? CabinetId {get; set;} = null;
-    public Cabinet? Cabinet{get; set;} = null;
+    public ICollection<ItemShelfHistory> ShelfHistories { get; set; } = new List<ItemShelfHistory>();
+    public ICollection<ItemUserHistory> UserHistories { get; set; } = new List<ItemUserHistory>();
 
 
 }
