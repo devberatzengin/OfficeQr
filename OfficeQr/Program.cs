@@ -1,5 +1,7 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using OfficeQr.Data;
 using OfficeQr.Data.Interfaces;
 using OfficeQr.Data.Repositories;
@@ -8,7 +10,6 @@ using OfficeQr.Helpers;
 using OfficeQr.Middleware;
 using OfficeQr.Services;
 using OfficeQr.Services.Interfaces;
-using Scalar.AspNetCore;
 
 namespace OfficeQr;
 
@@ -20,21 +21,65 @@ public class Program{
         // .net can find controller class anymore
         builder.Services.AddControllers();
 
+        builder.Services.AddHttpContextAccessor();
+
         // Custom Services
+
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
         builder.Services.AddScoped<IAuthService,AuthService>();
+        builder.Services.AddScoped<IItemService,ItemService>();
+        builder.Services.AddScoped<ICabinetService,CabinetService>();
+        builder.Services.AddScoped<IShelfService,ShelfService>();
+
+        // FluentValidation validators
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Item.CreateRequest>, OfficeQr.Validators.Item.CreateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Item.UpdateRequest>, OfficeQr.Validators.Item.UpdateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Cabinet.CreateRequest>, OfficeQr.Validators.Cabinet.CreateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Cabinet.UpdateRequest>, OfficeQr.Validators.Cabinet.UpdateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Shelf.CreateRequest>, OfficeQr.Validators.Shelf.CreateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Shelf.UpdateRequest>, OfficeQr.Validators.Shelf.UpdateRequestValidator>();
 
         // Data Dependecy Injections
-        builder.Services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
         builder.Services.AddScoped<IItemRepository, ItemRepository>();
         builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
         builder.Services.AddScoped<ICabinetRepository, CabinetRepository>();
+        builder.Services.AddScoped<IItemShelfHistoryRepository, ItemShelfHistoryRepository>();
+        builder.Services.AddScoped<IItemUserHistoryRepository, ItemUserHistoryRepository>();
+        builder.Services.AddScoped<IShelfCabinetHistoryRepository, ShelfCabinetHistoryRepository>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            // Farklı namespace'lerdeki aynı isimli DTO'lar (ör. Dtos.Item.CreateRequest ve
+            // Dtos.Cabinet.CreateRequest) schemaId çakışmasına yol açmasın diye namespace'in
+            // son parçasını class adına ekliyoruz: "ItemCreateRequest", "CabinetCreateRequest" gibi.
+            options.CustomSchemaIds(type =>
+            {
+                var nsSegment = type.Namespace?.Split('.').LastOrDefault();
+                return string.IsNullOrEmpty(nsSegment) ? type.Name : $"{nsSegment}{type.Name}";
+            });
+
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "Token",
+                In = ParameterLocation.Header,
+                Description = "/api/auth/login yanıtındaki accessToken değerini yapıştır (Swagger 'Bearer ' önekini otomatik ekler)."
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document, null)] = new List<string>()
+            });
+        });
 
         builder.Services.AddAuthorization();
 
@@ -48,14 +93,14 @@ public class Program{
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddApiEndpoints();
-        
-        
-        builder.Services.AddDbContext<ApplicationDbContext> (options =>
+
+
+        builder.Services.AddDbContext<IApplicationDbContext,ApplicationDbContext> (options =>
         {
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
 
-        
+
 
         var app = builder.Build();
 
@@ -77,13 +122,13 @@ public class Program{
         }
 
         app.UseHttpsRedirection();
-   
+
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.MapControllers();
         app.MapGroup("/identity").MapIdentityApi<User>().ExcludeFromDescription();
-        
+
         await app.RunAsync();
     }
 }
