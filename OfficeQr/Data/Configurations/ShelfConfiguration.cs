@@ -22,5 +22,7 @@ public class ShelfConfiguration : IEntityTypeConfiguration<Shelf>
             .WithMany(c => c.Shelves)
             .HasForeignKey(s => s.CabinetId)
             .OnDelete(DeleteBehavior.Restrict);
+    
+        builder.HasQueryFilter(s => !s.IsDeleted);
     }
 }

@@ -19,5 +19,11 @@ public class CabinetConfiguration : IEntityTypeConfiguration<Cabinet>
             .IsUnique();
 
         builder.HasQueryFilter(c => !c.IsDeleted);
+
+        builder.HasMany(c => c.Shelves)
+            .WithOne(s => s.Cabinet)
+            .HasForeignKey(s => s.CabinetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
