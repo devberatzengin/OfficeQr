@@ -10,6 +10,6 @@ public class Response
 
     public short Capacity {get; set;}
 
-    public Guid CabimetId {get; set;}
+    public Guid CabinetId {get; set;}
 
 }

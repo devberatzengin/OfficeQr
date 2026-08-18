@@ -12,6 +12,5 @@ public class UpdateRequest
 
     public Guid? UserId {get; set;} = null;
     public Guid? ShelfId {get; set;} = null;
-    public Guid? CabinetId {get; set;} = null;
 
 }
