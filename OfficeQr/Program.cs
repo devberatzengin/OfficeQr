@@ -23,10 +23,11 @@ public class Program{
 
         builder.Services.AddHttpContextAccessor();
 
+        // Auto Mapper
+        builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
+
         // Custom Services
-
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
         builder.Services.AddScoped<IAuthService,AuthService>();
         builder.Services.AddScoped<IItemService,ItemService>();
         builder.Services.AddScoped<ICabinetService,CabinetService>();
@@ -34,10 +35,14 @@ public class Program{
 
         // FluentValidation validators
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Item.CreateRequest>, OfficeQr.Validators.Item.CreateRequestValidator>();
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Item.UpdateRequest>, OfficeQr.Validators.Item.UpdateRequestValidator>();
+        builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Item.ReturnRequest>, OfficeQr.Validators.Item.ReturnRequestValidator>();
+        
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Cabinet.CreateRequest>, OfficeQr.Validators.Cabinet.CreateRequestValidator>();
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Cabinet.UpdateRequest>, OfficeQr.Validators.Cabinet.UpdateRequestValidator>();
+        
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Shelf.CreateRequest>, OfficeQr.Validators.Shelf.CreateRequestValidator>();
         builder.Services.AddScoped<IValidator<OfficeQr.Dtos.Shelf.UpdateRequest>, OfficeQr.Validators.Shelf.UpdateRequestValidator>();
 
@@ -51,14 +56,20 @@ public class Program{
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddProblemDetails();
+        builder.Services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Instance = context.HttpContext.Request.Path;
+                context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+            };
+        });
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
-            // Farklı namespace'lerdeki aynı isimli DTO'lar (ör. Dtos.Item.CreateRequest ve
-            // Dtos.Cabinet.CreateRequest) schemaId çakışmasına yol açmasın diye namespace'in
-            // son parçasını class adına ekliyoruz: "ItemCreateRequest", "CabinetCreateRequest" gibi.
+
             options.CustomSchemaIds(type =>
             {
                 var nsSegment = type.Namespace?.Split('.').LastOrDefault();
