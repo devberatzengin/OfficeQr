@@ -8,9 +8,9 @@ public class CreateRequestValidator : AbstractValidator<CreateRequest>
     public CreateRequestValidator()
     {
         RuleFor(req => req.Name)
-            .MaximumLength(255)
+            .NotEmpty().WithMessage("Item name cannot be empty")
             .MinimumLength(2)
-            .NotEmpty().WithMessage("Item name cannot be empty");
+            .MaximumLength(255);
         
     }
     
