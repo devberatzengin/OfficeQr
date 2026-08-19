@@ -25,6 +25,16 @@ public class ItemUserHistoryConfiguration : IEntityTypeConfiguration<ItemUserHis
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.AssignedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AssignedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.ReturnedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ReturnedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => new { x.ItemId, x.ReturnedAt });
     }
 }

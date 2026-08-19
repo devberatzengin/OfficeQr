@@ -25,6 +25,17 @@ public class ItemShelfHistoryConfiguration : IEntityTypeConfiguration<ItemShelfH
             .HasForeignKey(x => x.ShelfId)
             .OnDelete(DeleteBehavior.Restrict);
 
+
+        builder.HasOne(x => x.PlacedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.PlacedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.RemovedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.RemovedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => new { x.ItemId, x.RemovedAt });
     }
 }
