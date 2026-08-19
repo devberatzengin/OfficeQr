@@ -4,6 +4,8 @@ public class UnauthorizedException : AppException
 {
     public override int StatusCode => StatusCodes.Status401Unauthorized;
 
+    public override string Title => "User Unauthorized";
+
     public UnauthorizedException(string message) : base(message)
     {
     }
