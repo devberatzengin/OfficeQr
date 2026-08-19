@@ -8,6 +8,4 @@ public class Response
 
     public Guid? UserId {get; set;}
     public Guid? ShelfId {get; set;}
-    public Guid? CabinetId {get; set;}
-
 }
