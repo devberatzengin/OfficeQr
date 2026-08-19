@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OfficeQr.Data;
@@ -11,9 +12,11 @@ using OfficeQr.Data;
 namespace OfficeQr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819113519_AddReasonToHistoryTables")]
+    partial class AddReasonToHistoryTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,92 +25,6 @@ namespace OfficeQr.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ItemShelfHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("PlacedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("PlacedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Reason")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("RemovedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("RemovedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("RemovedReason")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("ShelfId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlacedByUserId");
-
-                    b.HasIndex("RemovedByUserId");
-
-                    b.HasIndex("ShelfId");
-
-                    b.HasIndex("ItemId", "RemovedAt");
-
-                    b.ToTable("ItemShelfHistories", "identity");
-                });
-
-            modelBuilder.Entity("ItemUserHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AssignedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Reason")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ReturnedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ReturnedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("ReturnedReason")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedByUserId");
-
-                    b.HasIndex("ReturnedByUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("ItemId", "ReturnedAt");
-
-                    b.ToTable("ItemUserHistories", "identity");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -316,6 +233,66 @@ namespace OfficeQr.Migrations
                     b.ToTable("Items", "identity");
                 });
 
+            modelBuilder.Entity("OfficeQr.Entity.ItemShelfHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("PlacedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RemovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ShelfId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShelfId");
+
+                    b.HasIndex("ItemId", "RemovedAt");
+
+                    b.ToTable("ItemShelfHistories", "identity");
+                });
+
+            modelBuilder.Entity("OfficeQr.Entity.ItemUserHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ReturnedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ItemId", "ReturnedAt");
+
+                    b.ToTable("ItemUserHistories", "identity");
+                });
+
             modelBuilder.Entity("OfficeQr.Entity.Shelf", b =>
                 {
                     b.Property<Guid>("Id")
@@ -458,72 +435,6 @@ namespace OfficeQr.Migrations
                     b.ToTable("AspNetUsers", "identity");
                 });
 
-            modelBuilder.Entity("ItemShelfHistory", b =>
-                {
-                    b.HasOne("OfficeQr.Entity.Item", "Item")
-                        .WithMany("ShelfHistories")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OfficeQr.Entity.User", "PlacedByUser")
-                        .WithMany()
-                        .HasForeignKey("PlacedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("OfficeQr.Entity.User", "RemovedByUser")
-                        .WithMany()
-                        .HasForeignKey("RemovedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("OfficeQr.Entity.Shelf", "Shelf")
-                        .WithMany()
-                        .HasForeignKey("ShelfId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("PlacedByUser");
-
-                    b.Navigation("RemovedByUser");
-
-                    b.Navigation("Shelf");
-                });
-
-            modelBuilder.Entity("ItemUserHistory", b =>
-                {
-                    b.HasOne("OfficeQr.Entity.User", "AssignedByUser")
-                        .WithMany()
-                        .HasForeignKey("AssignedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("OfficeQr.Entity.Item", "Item")
-                        .WithMany("UserHistories")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OfficeQr.Entity.User", "ReturnedByUser")
-                        .WithMany()
-                        .HasForeignKey("ReturnedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("OfficeQr.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AssignedByUser");
-
-                    b.Navigation("Item");
-
-                    b.Navigation("ReturnedByUser");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -588,6 +499,44 @@ namespace OfficeQr.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Shelf");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OfficeQr.Entity.ItemShelfHistory", b =>
+                {
+                    b.HasOne("OfficeQr.Entity.Item", "Item")
+                        .WithMany("ShelfHistories")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OfficeQr.Entity.Shelf", "Shelf")
+                        .WithMany()
+                        .HasForeignKey("ShelfId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Shelf");
+                });
+
+            modelBuilder.Entity("OfficeQr.Entity.ItemUserHistory", b =>
+                {
+                    b.HasOne("OfficeQr.Entity.Item", "Item")
+                        .WithMany("UserHistories")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OfficeQr.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Item");
 
                     b.Navigation("User");
                 });
