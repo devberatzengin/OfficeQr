@@ -53,6 +53,8 @@ public class Program{
         builder.Services.AddScoped<IItemShelfHistoryRepository, ItemShelfHistoryRepository>();
         builder.Services.AddScoped<IItemUserHistoryRepository, ItemUserHistoryRepository>();
         builder.Services.AddScoped<IShelfCabinetHistoryRepository, ShelfCabinetHistoryRepository>();
+        builder.Services.AddScoped<IItemStatusHistoryRepository, ItemStatusHistoryRepository>();
+
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
