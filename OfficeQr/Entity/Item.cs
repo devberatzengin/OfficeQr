@@ -22,5 +22,5 @@ public class Item : BaseEntity
     public ICollection<ItemUserHistory> UserHistories { get; set; } = new List<ItemUserHistory>();
     public ICollection<ItemStatusHistory> StatusHistories { get; set; } = new List<ItemStatusHistory>();
 
-
+    public uint Version { get; set; }
 }

@@ -3,10 +3,10 @@ namespace OfficeQr.Dtos.Item;
 public class MyActivityEntryResponse
 {
     public Guid ItemId { get; set; }
-    public string ItemName { get; set; }
-    public string Action { get; set; }
-    public string Type { get; set; }      // "Shelf" ya da "User"
-    public string Phase { get; set; }     // "Opened" ya da "Closed"
+    public string ItemName { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty; // Shelf or User
+    public string Phase { get; set; }  = string.Empty; // Opened or Closed
     public Guid? ShelfId { get; set; }
     public DateTime OccurredAt { get; set; }
 }
