@@ -6,6 +6,10 @@
 # dotenv files
 .env
 
+
+package-lock.json
+package.json
+
 # User-specific files
 *.rsuser
 *.suo
