@@ -28,6 +28,9 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
             .HasForeignKey(i => i.ShelfId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Property(i => i.Version)
+            .IsRowVersion();
+            
         builder.HasQueryFilter(i => !i.IsDeleted);
     }
 }

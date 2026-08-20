@@ -1,5 +1,6 @@
-
+using Microsoft.EntityFrameworkCore;
 using OfficeQr.Data.Interfaces;
+using OfficeQr.Exceptions;
 
 namespace OfficeQr.Data;
 
@@ -52,6 +53,15 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
-        return await _applicationDbContext.SaveChangesAsync(ct);
+        try
+        {
+            return await _applicationDbContext.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new ConcurrencyConflictException(
+                "Bu ürün senden hemen önce başka biri tarafından değiştirildi. Lütfen sayfayı yenileyip tekrar dene.");
+        }
     }
+
 }
