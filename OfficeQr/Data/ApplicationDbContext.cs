@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<ItemShelfHistory> ItemShelfHistories { get; set; }
     public DbSet<ItemUserHistory> ItemUserHistories { get; set; }
     public DbSet<ShelfCabinetHistory> ShelfCabinetHistories { get; set; }
+    public DbSet<ItemStatusHistory> ItemStatusHistories {get; set;}
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -37,6 +38,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         builder.ApplyConfiguration(new ItemShelfHistoryConfiguration());
         builder.ApplyConfiguration(new ItemUserHistoryConfiguration());
         builder.ApplyConfiguration(new ShelfCabinetHistoryConfiguration());
+        builder.ApplyConfiguration(new ItemStatusHistoryConfiguration());   
 
         builder.HasDefaultSchema("identity");
     }

@@ -1,4 +1,4 @@
-namespace OfficeQr.Entity;
+namespace OfficeQr.Entity.Enums;
 
 public enum ItemMovementReason
 {

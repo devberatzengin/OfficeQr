@@ -11,6 +11,7 @@ public interface IUnitOfWork : IAsyncDisposable
     IItemShelfHistoryRepository ItemShelfHistories {get;}
     IItemUserHistoryRepository ItemUserHistories {get;}
     IShelfCabinetHistoryRepository ShelfCabinetHistories {get;}
+    IItemStatusHistoryRepository ItemStatusHistories {get;}
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly IItemShelfHistoryRepository _itemShelfHistoryRepository;
     private readonly IItemUserHistoryRepository _itemUserHistoryRepository;
     private readonly IShelfCabinetHistoryRepository _shelfCabinetHistoryRepository;
+    private readonly IItemStatusHistoryRepository _itemStatusHistoryRepository;
 
     public UnitOfWork(
         ApplicationDbContext applicationDbContext,
@@ -21,7 +22,8 @@ public class UnitOfWork : IUnitOfWork
         ICabinetRepository cabinetRepository,
         IItemShelfHistoryRepository itemShelfHistoryRepository,
         IItemUserHistoryRepository itemUserHistoryRepository,
-        IShelfCabinetHistoryRepository shelfCabinetHistoryRepository)
+        IShelfCabinetHistoryRepository shelfCabinetHistoryRepository,
+        IItemStatusHistoryRepository itemStatusHistoryRepository)
     {
         _applicationDbContext = applicationDbContext;
         _itemRepository = itemRepository;
@@ -30,6 +32,7 @@ public class UnitOfWork : IUnitOfWork
         _itemShelfHistoryRepository = itemShelfHistoryRepository;
         _itemUserHistoryRepository = itemUserHistoryRepository;
         _shelfCabinetHistoryRepository = shelfCabinetHistoryRepository;
+        _itemStatusHistoryRepository = itemStatusHistoryRepository;
     }
 
 
@@ -40,6 +43,7 @@ public class UnitOfWork : IUnitOfWork
     public IItemShelfHistoryRepository ItemShelfHistories => _itemShelfHistoryRepository;
     public IItemUserHistoryRepository ItemUserHistories => _itemUserHistoryRepository;
     public IShelfCabinetHistoryRepository ShelfCabinetHistories => _shelfCabinetHistoryRepository;
+    public IItemStatusHistoryRepository ItemStatusHistories => _itemStatusHistoryRepository;
 
     public async ValueTask DisposeAsync()
     {

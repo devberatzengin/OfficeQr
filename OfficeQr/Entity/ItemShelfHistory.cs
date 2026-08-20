@@ -1,4 +1,5 @@
 using OfficeQr.Entity;
+using OfficeQr.Entity.Enums;
 
 public class ItemShelfHistory
 {
