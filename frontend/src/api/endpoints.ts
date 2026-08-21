@@ -1,5 +1,6 @@
 import { api } from "./client";
 import type {
+  AdminUserResponse,
   CabinetResponse,
   ItemMovementEntry,
   ItemResponse,
@@ -25,6 +26,12 @@ export const authApi = {
 
 export const usersApi = {
   getById: (id: string) => api.get<UserSummary>(`/api/Users/${id}`),
+
+  // Admin kullanıcı yönetimi ekranı için — sadece Admin rolü çağırabilir.
+  getAll: () => api.get<AdminUserResponse[]>("/api/Users"),
+  remove: (id: string) => api.delete<AdminUserResponse>(`/api/Users/${id}`),
+  deactivate: (id: string) => api.post<AdminUserResponse>(`/api/Users/${id}/deactivate`),
+  activate: (id: string) => api.post<AdminUserResponse>(`/api/Users/${id}/activate`),
 };
 
 export const cabinetApi = {

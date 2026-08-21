@@ -42,6 +42,16 @@ export function HomePage() {
           </Link>
         </div>
       )}
+
+      {isAdmin && (
+        <div className="card stack">
+          <h3>Yönetim</h3>
+          <Link to="/admin/users" className="list-item">
+            <span className="list-item__title">Kullanıcı Yönetimi</span>
+            <span className="muted">›</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { ItemsListPage } from "./pages/ItemsListPage";
 import { ItemDetailPage } from "./pages/ItemDetailPage";
 import { ItemCreatePage } from "./pages/ItemCreatePage";
 import { MyActivityPage } from "./pages/MyActivityPage";
+import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
 export default function App() {
@@ -42,6 +43,8 @@ export default function App() {
               <Route path="/items/:id" element={<ItemDetailPage />} />
 
               <Route path="/my-activity" element={<MyActivityPage />} />
+
+              <Route path="/admin/users" element={<AdminUsersPage />} />
 
               <Route path="*" element={<NotFoundPage />} />
             </Route>

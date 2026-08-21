@@ -51,6 +51,16 @@ export interface UserSummary {
   email: string;
 }
 
+// OfficeQr/Dtos/User/UserResponse.cs'in tam hali — admin kullanıcı yönetimi
+// ekranında kullanılıyor (UserSummary sadece id/email taşıyor).
+export interface AdminUserResponse {
+  id: string;
+  email: string;
+  isActive: boolean;
+  createdOn: string;
+  roles: string[];
+}
+
 // Backend artık RFC 7807 "Problem Details" formatında hata dönüyor
 // (bkz. OfficeQr/Middleware/GlobalExceptionHandler.cs). Validasyon hatalarında
 // `errors` alanı da doluyor (alan adı -> hata mesajları).
