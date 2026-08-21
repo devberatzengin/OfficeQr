@@ -5,16 +5,17 @@ export interface ParsedQr {
   id: string;
 }
 
-// Backend'in QrCodeGenerator.cs'i şu an "{ClassName}:{Id}" formatı üretiyor
-// (ör. "Item:7d282733-..."). Spesifikasyon "WMS:PRODUCT:{publicId}" formatını
-// istiyor (bkz. BACKEND_TODO.md). İkisini de tanıyoruz ki backend formatı
-// değişince frontend'de hiçbir şey değişmesin.
+// Backend'in QrCodeGenerator.cs'i artık "WMS:{TYPE}:{Id}" formatı üretiyor
+// (ör. "WMS:ITEM:7d282733-...", "WMS:CABINET:...", "WMS:SHELF:..."). Eski
+// "{ClassName}:{Id}" formatını da (ör. "Item:7d282733-...") tanımaya devam
+// ediyoruz ki daha önce basılmış QR etiketleri geçersiz olmasın.
 const PATTERNS: { regex: RegExp; type: QrEntityType }[] = [
   { regex: /^Cabinet:(.+)$/i, type: "cabinet" },
   { regex: /^Shelf:(.+)$/i, type: "shelf" },
   { regex: /^Item:(.+)$/i, type: "item" },
   { regex: /^WMS:CABINET:(.+)$/i, type: "cabinet" },
   { regex: /^WMS:SHELF:(.+)$/i, type: "shelf" },
+  { regex: /^WMS:ITEM:(.+)$/i, type: "item" },
   { regex: /^WMS:PRODUCT:(.+)$/i, type: "item" },
 ];
 

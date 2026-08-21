@@ -19,7 +19,7 @@ public class QrCodeGenerator
 
         using var qrGenerator = new QRCodeGenerator();
     
-        using var qrCodeData = qrGenerator.CreateQrCode($"{className}:{idProperty}", QRCodeGenerator.ECCLevel.Q);
+        using var qrCodeData = qrGenerator.CreateQrCode($"WMS:{className.ToUpper()}:{idProperty}", QRCodeGenerator.ECCLevel.Q);
         
         using var qrCode = new PngByteQRCode(qrCodeData);
         byte[] qrCodeBytes = qrCode.GetGraphic(20);
