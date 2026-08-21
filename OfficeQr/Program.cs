@@ -32,6 +32,7 @@ public class Program{
         builder.Services.AddScoped<IItemService,ItemService>();
         builder.Services.AddScoped<ICabinetService,CabinetService>();
         builder.Services.AddScoped<IShelfService,ShelfService>();
+        builder.Services.AddScoped<IUserService,UserService>();
 
         // FluentValidation validators
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();

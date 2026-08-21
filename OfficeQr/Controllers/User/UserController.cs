@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OfficeQr.Dtos.User;
-using OfficeQr.Entity;
+using OfficeQr.Services.Interfaces;
 
 namespace OfficeQr.Controllers.User;
 
@@ -11,22 +10,58 @@ namespace OfficeQr.Controllers.User;
 [Authorize]
 public class UsersController : ControllerBase
 {
-    private readonly UserManager<OfficeQr.Entity.User> _userManager;
+    private readonly IUserService _userService;
 
-    public UsersController(UserManager<OfficeQr.Entity.User> userManager)
+    public UsersController(IUserService userService)
     {
-        _userManager = userManager;
+        _userService = userService;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(List<UserResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var result = await _userService.GetAllAsync(cancellationToken);
+        return Ok(result);
     }
 
     [HttpGet("{userId:guid}")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserResponse>> GetByIdAsync(Guid userId)
+    public async Task<ActionResult<UserResponse>> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user is null)
-            return NotFound();
+        var result = await _userService.GetByIdAsync(userId, cancellationToken);
+        return Ok(result);
+    }
 
-        return Ok(new UserResponse { Id = user.Id, Email = user.Email ?? string.Empty });
+    [HttpDelete("{userId:guid}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponse>> DeleteAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await _userService.DeleteAsync(userId, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("{userId:guid}/deactivate")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponse>> DeactivateAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await _userService.DeactivateAsync(userId, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("{userId:guid}/activate")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponse>> ActivateAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await _userService.ActivateAsync(userId, cancellationToken);
+        return Ok(result);
     }
 }
